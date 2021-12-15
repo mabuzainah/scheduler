@@ -5,7 +5,11 @@ import "components/DayListItem.scss";
 export default function DayListItem(props) {
     const dayListItemClass = classnames("day-list__item", {
         "day-list__item--selected": props.selected,
-        "day-list__item--full": props.full
+        "day-list__item--full": !(props.spots)
+        // ^ props.spots returns number of spots available. So if no spots are 
+        // available then we would have to use !props.spots to apply the full styling. 
+        // previous code of props.full doesn't make sense as there's nothing being
+        // passed to DayListItem as a prop indicating being full. 
      });
     
     const formatSpots = function (spotsAvailable) {
