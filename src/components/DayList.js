@@ -12,7 +12,6 @@ export default function DayList(props) {
                 selected= {dayz.name === props.day}
                 setDay= {props.setDay}
                 > 
-                    {dayz} 
                 </DayListItem>);
     });
 
