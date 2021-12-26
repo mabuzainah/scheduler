@@ -74,9 +74,7 @@ export default function Application(props) {
   const appointmentList = appointments.map(appointment => {
     return (<Appointment
             key= {appointment.id}
-            id={appointment.id}
-            time= {appointment.time}
-            interview= {appointment.interview}
+            {...appointment}
             > 
             </Appointment>);
   });
