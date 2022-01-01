@@ -11,8 +11,17 @@ export function getAppointmentsForDay(state, day) {
         }
     };
     
+//    state.days.map(dayObject => {
+//      if (dayObject.name === day) {
+//        dayObject.appointments.forEach(apptId => appointmentArray.push(apptId))
+//      }
+//    })
+   
     const matchingAppointments = appointmentArray.map( id => state.appointments[id]);
     return matchingAppointments;
 
 }
- 
+
+export function getInterview(state,interview) {
+    
+}
