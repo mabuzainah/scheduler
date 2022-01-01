@@ -6,20 +6,25 @@ import "components/Application.scss";
 import DayList from "./DayList";
 import Appointment from "./Appointment";
 import { getAppointmentsForDay } from "helpers/selectors";
+import { getInterview } from "helpers/selectors";
 
 export default function Application(props) {
 
   const [state, setState] = useState({
     day: "Monday",
     days: [],
-    appointments: {}
+    appointments: {},
+    interviewers: {}
   });
 
   const dailyAppointments = getAppointmentsForDay(state, state.day); 
   const appointmentList = dailyAppointments.map(appointment => {
+    const interview = getInterview(state, appointment.interview);
     return (<Appointment
             key= {appointment.id}
-            {...appointment}
+            id={appointment.id}
+            time={appointment.time}
+            interview={interview}
             > 
           </Appointment>);
     });  
@@ -35,14 +40,20 @@ export default function Application(props) {
   function getAppointmentsAxios() {
     return axios.get('http://localhost:8001/api/appointments');
   }
+
+  function getInterviewersAxios() {
+    return axios.get('http://localhost:8001/api/interviewers');
+  }
+
   useEffect(() => {
     Promise.all([
       getDaysAxios(),
       getAppointmentsAxios(),
+      getInterviewersAxios(),
     ]).then((all) => {
-      const [first, second] = all;
-      console.log(first, second);
-      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data}));
+      const [first, second, third] = all;
+      console.log(first, second, third);
+      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}));
     });
   }, [])
 
