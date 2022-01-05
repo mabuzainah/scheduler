@@ -10,12 +10,6 @@ export function getAppointmentsForDay(state, day) {
             dayFromState.appointments.forEach(apptId => appointmentArray.push(apptId)); 
         }
     };
-    
-//    state.days.map(dayObject => {
-//      if (dayObject.name === day) {
-//        dayObject.appointments.forEach(apptId => appointmentArray.push(apptId))
-//      }
-//    })
    
     const matchingAppointments = appointmentArray.map( id => state.appointments[id]);
     return matchingAppointments;
@@ -23,5 +17,14 @@ export function getAppointmentsForDay(state, day) {
 }
 
 export function getInterview(state,interview) {
-    
+    //checking to see if the interview being passed is null, if null then return nothing.
+    if (!interview) {
+        return null;
+    }
+    // otherwise return the student based off the interview passed and the interviewer based off 
+    // what's in the interview being passed down to the function. 
+    return {
+        student: interview.student,
+        interviewer: state.interviewers[interview.interviewer]
+    }
 }
