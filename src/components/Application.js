@@ -43,6 +43,25 @@ export default function Application(props) {
     // });
   }
 
+  function cancelInterview (id) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    }
+    const appointments = {
+      ...state.appointments,
+      [id] : appointment
+    }
+    //Make put request to update state locally and on server
+    return axios.delete(`/api/appointments/${id}`)
+    .then(result =>{
+      console.log(result);
+      setState(
+        {...state, appointments}
+      );
+    });
+  }
+
   const dailyAppointments = getAppointmentsForDay(state, state.day); 
   // console.log("daily appointments: " + dailyAppointments);
   // appointmentList is basically the schedule for the day.
@@ -58,6 +77,7 @@ export default function Application(props) {
             interview={interview}
             interviewers = {dayInterviewers}
             bookInterview = {bookInterview}
+            cancelInterview = {cancelInterview}
             > 
           </Appointment>);
     });  
