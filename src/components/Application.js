@@ -28,10 +28,19 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
-    setState({
-      ...state,
-      appointments
+    //Make put request to update state locally and on server
+    return axios.put(`/api/appointments/${id}`, {interview})
+    .then(result =>{
+      console.log(result);
+      setState(
+        {...state, appointments}
+      );
     });
+    
+    // setState({
+    //   ...state,
+    //   appointments
+    // });
   }
 
   const dailyAppointments = getAppointmentsForDay(state, state.day); 
