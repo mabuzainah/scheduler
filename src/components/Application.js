@@ -7,6 +7,7 @@ import DayList from "./DayList";
 import Appointment from "./Appointment";
 import { getAppointmentsForDay } from "helpers/selectors";
 import { getInterview } from "helpers/selectors";
+import { getInterviewersForDay } from "helpers/selectors";
 
 export default function Application(props) {
 
@@ -17,14 +18,37 @@ export default function Application(props) {
     interviewers: {}
   });
 
+  function bookInterview(id, interview) {
+    console.log(id, interview);
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState({
+      ...state,
+      appointments
+    });
+  }
+
   const dailyAppointments = getAppointmentsForDay(state, state.day); 
+  console.log("daily appointments: " + dailyAppointments);
+  // appointmentList is basically the schedule for the day.
   const appointmentList = dailyAppointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
+    const dayInterviewers = getInterviewersForDay(state, state.day);
+    console.log("interviewers:" + state.interviewers.id);
+    console.log("Day Interviewers: " + dayInterviewers);
     return (<Appointment
             key= {appointment.id}
             id={appointment.id}
             time={appointment.time}
             interview={interview}
+            interviewers = {dayInterviewers}
+            bookInterview = {bookInterview}
             > 
           </Appointment>);
     });  
@@ -81,7 +105,7 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         {appointmentList}
-        <Appointment key="last" time="5pm" />
+        <Appointment key="last" time="5pm"/>
       </section>
     </main>
   );
