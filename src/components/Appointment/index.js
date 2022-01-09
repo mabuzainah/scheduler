@@ -1,5 +1,4 @@
-import React , {useState} from "react";
-
+import React  from "react";
 import "components/Appointment";
 import "components/Appointment/styles.scss";
 import Header from "./Header";
@@ -8,7 +7,6 @@ import Empty from "./Empty";
 import Status from "./Status"
 import { useVisualMode } from "hooks/useVisualMode";
 import Form from "./Form";
-import { useEffect } from "react";
 import Confirm from "./Confirm";
 import Error from "./Error";
 
