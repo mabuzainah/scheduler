@@ -1,102 +1,129 @@
+import { useReducer } from "react";
 import { useState } from "react";
 import axios  from "axios";
 import { useEffect } from "react";
 
 export function useApplicationData() {
-    const [state, setState] = useState({
-        day: "Monday",
-        days: [],
-        appointments: {},
-        interviewers: {}
-    });
 
-    const setDay = day => setState({ ...state, day });
-    
-    function updateSpots(days, id, increment = true) {
-      const updatedDay = days.map((day) => {
-        if (increment === false) {
-          if (day.appointments.includes(id)) {
-            day.spots = day.spots - 1;
-          }
-          return day;
-        } else {
-          if (day.appointments.includes(id)) {
-            day.spots = day.spots + 1;
-          }
-          return day;
-        }
-      });
-      return updatedDay;
-    }
-    
-    function bookInterview(id, interview) {
-        const appointment = {
-          ...state.appointments[id],
-          interview: { ...interview }
-        };
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment
-        };
-        const updatedDays = updateSpots(state.days, id, false);
-        //Make put request to update state locally and on server
-        return axios.put(`/api/appointments/${id}`, {interview})
-        .then(result =>{
-          //console.log(result);
-          setState(
-            {...state, appointments, updatedDays}
-          );
-        });
-    }
-    
-    function cancelInterview (id) {
-        const appointment = {
-          ...state.appointments[id],
-          interview: null
-        }
-        const appointments = {
-          ...state.appointments,
-          [id] : appointment
-        }
-        const updatedDays = updateSpots(state.days, id, true);
-        //Make put request to update state locally and on server
-        return axios.delete(`/api/appointments/${id}`)
-        .then(result =>{
-          //console.log(result);
-          setState(
-            {...state, appointments, updatedDays}
-          );
-        });
-    }
+  // const SET_DAY = "SET_DAY";
+  // const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+  // const SET_INTERVIEW = "SET_INTERVIEW";
 
-    // USING PROMISE ALL to fetch the Days using AXIOS and Appointments using
-    // AXIOS concurrently. 
-    function getDaysAxios() {
-        return axios.get('http://localhost:8001/api/days');
-    }
+  // function reducer(state, action) {
+  //   switch (action.type) {
+  //     case SET_DAY:
+  //       return { /* insert logic */ }
+  //     case SET_APPLICATION_DATA:
+  //       return { /* insert logic */ }
+  //     case SET_INTERVIEW: {
+  //       return /* insert logic */
+  //     }
+  //     default:
+  //       throw new Error(
+  //         `Tried to reduce with unsupported action type: ${action.type}`
+  //       );
+  //   }
+  // }
+  const [state, setState] = useState({
+      day: "Monday",
+      days: [],
+      appointments: {},
+      interviewers: {}
+  });
   
-    function getAppointmentsAxios() {
-        return axios.get('http://localhost:8001/api/appointments');
-    }
+  // dispatch({ type: SET_DAY, day });
+  // dispatch({ type: SET_APPLICATION_DATA, days, appointments, interviewers });
+  // dispatch({ type: SET_INTERVIEW, id, interview });
+  // dispatch({ type: SET_INTERVIEW, id, interview: null });
 
-    function getInterviewersAxios() {
-        return axios.get('http://localhost:8001/api/interviewers');
-    }
 
-    useEffect(() => {
-        Promise.all([
-        getDaysAxios(),
-        getAppointmentsAxios(),
-        getInterviewersAxios(),
-        ]).then((all) => {
-        setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}));
-        });
-    }, [])
+  const setDay = day => setState({ ...state, day });
+    
+  function updateSpots(days, id, increment = true) {
+    const updatedDay = days.map((day) => {
+      if (increment === false) {
+        if (day.appointments.includes(id)) {
+          day.spots = day.spots - 1;
+        }
+        return day;
+      } else {
+        if (day.appointments.includes(id)) {
+          day.spots = day.spots + 1;
+        }
+        return day;
+      }
+    });
+    return updatedDay;
+  }
+  
+  function bookInterview(id, interview) {
+      const appointment = {
+        ...state.appointments[id],
+        interview: { ...interview }
+      };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment
+      };
+      const updatedDays = updateSpots(state.days, id, false);
+      //Make put request to update state locally and on server
+      return axios.put(`/api/appointments/${id}`, {interview})
+      .then(result =>{
+        //console.log(result);
+        setState(
+          {...state, appointments, updatedDays}
+        );
+      });
+  }
+  
+  function cancelInterview (id) {
+      const appointment = {
+        ...state.appointments[id],
+        interview: null
+      }
+      const appointments = {
+        ...state.appointments,
+        [id] : appointment
+      }
+      const updatedDays = updateSpots(state.days, id, true);
+      //Make put request to update state locally and on server
+      return axios.delete(`/api/appointments/${id}`)
+      .then(result =>{
+        //console.log(result);
+        setState(
+          {...state, appointments, updatedDays}
+        );
+      });
+  }
 
-    return {
-        state,
-        setDay,
-        bookInterview,
-        cancelInterview
-    };
+  // USING PROMISE ALL to fetch the Days using AXIOS and Appointments using
+  // AXIOS concurrently. 
+  function getDaysAxios() {
+      return axios.get('http://localhost:8001/api/days');
+  }
+
+  function getAppointmentsAxios() {
+      return axios.get('http://localhost:8001/api/appointments');
+  }
+
+  function getInterviewersAxios() {
+      return axios.get('http://localhost:8001/api/interviewers');
+  }
+
+  useEffect(() => {
+      Promise.all([
+      getDaysAxios(),
+      getAppointmentsAxios(),
+      getInterviewersAxios(),
+      ]).then((all) => {
+      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}));
+      });
+  }, [])
+
+  return {
+      state,
+      setDay,
+      bookInterview,
+      cancelInterview
+  };
 }
