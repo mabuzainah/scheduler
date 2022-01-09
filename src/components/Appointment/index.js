@@ -10,6 +10,7 @@ import { useVisualMode } from "hooks/useVisualMode";
 import Form from "./Form";
 import { useEffect } from "react";
 import Confirm from "./Confirm";
+import Error from "./Error";
 
 export default function Appointment(props) {
     const EMPTY = "EMPTY";
@@ -19,6 +20,8 @@ export default function Appointment(props) {
     const DELETING = "DELETING";
     const CONFIRM = "CONFIRM";
     const EDIT = "EDIT";
+    const ERROR_SAVE = "ERROR_SAVE";
+    const ERROR_DELETE = "ERROR_DELETE";
     
 
     const { mode, transition, back } = useVisualMode(
@@ -34,7 +37,11 @@ export default function Appointment(props) {
         transition(SAVING);
 
         props.bookInterview(props.id, interview)
-        .then(() => transition(SHOW));
+        .then(() => transition(SHOW))
+        .catch((error) => {
+            console.log("Error attempting to Save:", error)
+            transition(ERROR_SAVE, true);
+        });
 
     }
 
@@ -43,13 +50,17 @@ export default function Appointment(props) {
             transition(CONFIRM)
           }
           else {
-            transition(DELETING)
+            transition(DELETING, true)
             props.cancelInterview(props.id)
-            .then(()=>transition(EMPTY));
+            .then(()=>transition(EMPTY))
+            .catch((error) => {
+                console.log("Error attempting to Delete:", error)
+                transition(ERROR_DELETE, true);
+            });
           }
     }
 
-    function edit() {
+    function edit () {
         transition(EDIT);
     }
 
@@ -98,6 +109,18 @@ export default function Appointment(props) {
                         name = {props.interview.student}
                         onCancel={back} 
                         onSave={save}
+                    />
+                )}
+                {mode === ERROR_SAVE && (
+                    <Error
+                        message="Could not save appointment"
+                        onClose={back}
+                    />
+                )}
+                {mode === ERROR_DELETE && (
+                    <Error
+                        message="Could not delete appointment"
+                        onClose={back}
                     />
                 )}
         </article> 
