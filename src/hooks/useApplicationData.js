@@ -1,5 +1,4 @@
 import { useReducer } from "react";
-import { useState } from "react";
 import axios  from "axios";
 import { useEffect } from "react";
 
@@ -33,7 +32,8 @@ export function useApplicationData() {
         return { 
           ...state,
           appointments: action.value.appointments,
-          interview: action.value
+          interview: action.value.interview,
+          spots: action.value.spots
         };
       default:
         throw new Error(
@@ -69,18 +69,16 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    //const updatedDays = updateSpots(state.days, id, false);
+    const updatedDays = updateSpots(state.days, id, false);
     //Make put request to update state locally and on server
     return axios.put(`/api/appointments/${id}`, {interview})
     .then(result => {
-      // setState(
-      //   {...state, appointments, updatedDays}
-      // );
       dispatch({
         type: SET_INTERVIEW,
         value: {
           appointments: appointments,
-          interview: interview
+          interview: interview,
+          spots: updatedDays
         }
       });
     })
@@ -95,18 +93,16 @@ export function useApplicationData() {
         ...state.appointments,
         [id] : appointment
       }
-      //const updatedDays = updateSpots(state.days, id, true);
+      const updatedDays = updateSpots(state.days, id, true);
       //Make put request to update state locally and on server
       return axios.delete(`/api/appointments/${id}`)
       .then(result =>{
-        // setState(
-        //   {...state, appointments, updatedDays}
-        // );
         dispatch({
           type: SET_INTERVIEW,
           value: {
             appointments: appointments,
-            interview: null
+            interview: null,
+            spots: updatedDays
           }
         });
       });
@@ -132,7 +128,6 @@ export function useApplicationData() {
       getAppointmentsAxios(),
       getInterviewersAxios(),
       ]).then((all) => {
-      //setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}));
         dispatch({
           type: SET_APPLICATION_DATA,
           value: {
