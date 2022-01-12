@@ -137,7 +137,7 @@ storiesOf("InterviewerList", module)
   .add("Preselected", () => (
     <InterviewerList
       interviewers={interviewers}
-      value={3}
+      value={interviewers[2].id}
       onChange={action("onChange")}
     />
   ));
@@ -179,7 +179,7 @@ storiesOf("Appointment", module)
       onSave ={action("onSave")}
       onCancel ={action("onCancel")}
       interviewers = {interviewers}
-      value = "3"
+      value = {interviewer.id}
       name = "Alex"
     />
   ))

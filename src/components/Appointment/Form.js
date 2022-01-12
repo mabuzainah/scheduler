@@ -17,6 +17,20 @@ export default function Form(props) {
         props.onCancel();
     };
 
+    /*
+        Function to validate the input on the form, to not allow user to submit 
+        with invalid data such as blank interviewer or name of student.
+    */
+    const validateFormInput = function () {
+        if (currentNameOfStudent === ""){
+            alert("Please input a name for the Student in the form")
+        } if (!currentInterviewer) {
+            alert("Please select an interviewer")
+        } else if (currentNameOfStudent !== "" && currentInterviewer){
+            props.onSave(currentNameOfStudent,currentInterviewer);
+        }
+    }
+
     return (
         <main className="appointment__card appointment__card--create">
         <section className="appointment__card-left">
@@ -38,7 +52,7 @@ export default function Form(props) {
         <section className="appointment__card-right">
             <section className="appointment__actions">
                 <Button danger onClick={cancel}>Cancel</Button>
-                <Button confirm onSubmit={event => event.preventDefault()} onClick={event => props.onSave(currentNameOfStudent, currentInterviewer)}>Save</Button>
+                <Button confirm onSubmit={event => event.preventDefault()} onClick={validateFormInput}>Save</Button>
             </section>
         </section>
         </main>
