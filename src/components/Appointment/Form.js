@@ -42,6 +42,7 @@ export default function Form(props) {
                 value = {currentNameOfStudent}
                 type="text"
                 placeholder={currentNameOfStudent? currentNameOfStudent: "Please enter your name"}
+                data-testid="student-name-input"
                 /*
                 This must be a controlled component
                 */
