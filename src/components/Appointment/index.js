@@ -46,8 +46,8 @@ export default function Appointment(props) {
     function remove () {
         if(mode === SHOW){
             transition(CONFIRM)
-          }
-          else {
+        }
+        else {
             transition(DELETING, true)
             props.cancelInterview(props.id)
             .then(()=>transition(EMPTY))
@@ -55,7 +55,7 @@ export default function Appointment(props) {
                 console.log("Error attempting to Delete:", error)
                 transition(ERROR_DELETE, true);
             });
-          }
+        }
     }
 
     function edit () {
