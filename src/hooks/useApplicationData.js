@@ -33,7 +33,8 @@ export function useApplicationData() {
           ...state,
           appointments: action.value.appointments,
           interview: action.value.interview,
-          spots: action.value.spots
+          // spots: action.value.spots,
+          days: getDaysWithRemainingSpots(state.days, action.value.appointments)
         };
       default:
         throw new Error(
@@ -42,22 +43,39 @@ export function useApplicationData() {
     }
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
-    
-  function updateSpots(days, id, increment = true) {
-    const updatedDay = days.map((day) => {
-      if (increment === false) {
-        if (day.appointments.includes(id)) {
-          day.spots = day.spots - 1;
+  
+  // function updateSpots(days, id, increment = true) {
+  //   const updatedDay = days.map((day) => {
+  //     if (increment === false) {
+  //       if (day.appointments.includes(id)) {
+  //         day.spots = day.spots - 1;
+  //       }
+  //       return day;
+  //     } else {
+  //       if (day.appointments.includes(id)) {
+  //         day.spots = day.spots + 1;
+  //       }
+  //       return day;
+  //     }
+  //   });
+  //   return updatedDay;
+  // }  
+  
+  function getDaysWithRemainingSpots(days, appointments) {
+    const daysWithSpots = days.map((item) => {
+      let spotsAvailable = 0;
+      for (const appt of item.appointments) {
+        if (appointments[appt].interview === null) {
+          spotsAvailable++;
         }
-        return day;
-      } else {
-        if (day.appointments.includes(id)) {
-          day.spots = day.spots + 1;
-        }
-        return day;
       }
+      //returning an object that involves the days and their spots
+      return {
+        ...item,
+        spots: spotsAvailable,
+      };
     });
-    return updatedDay;
+    return daysWithSpots;
   }
   
   function bookInterview(id, interview) {
@@ -69,7 +87,7 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    const updatedDays = updateSpots(state.days, id, false);
+    //const updatedDays = updateSpots(state.days, id, false);
     //Make put request to update state locally and on server
     return axios.put(`/api/appointments/${id}`, {interview})
     .then(result => {
@@ -78,7 +96,7 @@ export function useApplicationData() {
         value: {
           appointments: appointments,
           interview: interview,
-          spots: updatedDays
+          //spots: updatedDays
         }
       });
     })
@@ -93,7 +111,7 @@ export function useApplicationData() {
         ...state.appointments,
         [id] : appointment
       }
-      const updatedDays = updateSpots(state.days, id, true);
+      //const updatedDays = updateSpots(state.days, id, true);
       //Make put request to update state locally and on server
       return axios.delete(`/api/appointments/${id}`)
       .then(result =>{
@@ -102,7 +120,7 @@ export function useApplicationData() {
           value: {
             appointments: appointments,
             interview: null,
-            spots: updatedDays
+            //spots: updatedDays
           }
         });
       });
@@ -111,15 +129,19 @@ export function useApplicationData() {
   // USING PROMISE ALL to fetch the Days using AXIOS and Appointments using
   // AXIOS concurrently. 
   function getDaysAxios() {
-      return axios.get('http://localhost:8001/api/days');
+      //return axios.get('http://localhost:8001/api/days');
+      return axios.get('/api/days');
+
   }
 
   function getAppointmentsAxios() {
-      return axios.get('http://localhost:8001/api/appointments');
+      //return axios.get('http://localhost:8001/api/appointments');
+      return axios.get('/api/appointments');
   }
 
   function getInterviewersAxios() {
-      return axios.get('http://localhost:8001/api/interviewers');
+      //return axios.get('http://localhost:8001/api/interviewers');
+      return axios.get('/api/interviewers');
   }
 
   useEffect(() => {
@@ -136,6 +158,35 @@ export function useApplicationData() {
             interviewers: all[2].data
           }
         });
+        // const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+        // socket.onopen = () => {
+        //   console.log("Web socket opened");
+        //   socket.send("Ping...");
+        // };
+        // socket.onmessage = appointmentData => {
+        //   const appointment = JSON.parse(appointmentData.data);
+        //   console.log("message to Websocket server: ", appointment);
+ 
+        //   debugger;
+ 
+        //   const appointments = {
+        //     ...state.appointments,
+        //     [appointment.id]: appointment
+        //   };
+ 
+        //    if (appointment.type === "SET_INTERVIEW") {
+        //      console.log("I've reached the step to check for appointment.type response from WebSocket to SET_INTERVIEW")
+        //      dispatch(
+        //       { 
+        //         type: SET_INTERVIEW, 
+        //         value: {
+        //           appointments: appointments
+        //         }
+        //       });
+        //   }
+        // };
+
+
       });
   }, [])
 
