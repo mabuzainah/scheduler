@@ -17,7 +17,7 @@ export function useVisualMode(initial) {
                 prev.push(newMode)
                 return prev;
             });
-            console.log("transition from " , mode, "to ", newMode);
+           // console.log("transition from " , mode, "to ", newMode);
         } else {
             setMode(newMode);
             //using the array method of push to append to the end of 
@@ -26,7 +26,7 @@ export function useVisualMode(initial) {
                 prev.push(newMode);
                 return prev;
             });
-            console.log("transition from " , mode, "to ", newMode);
+           // console.log("transition from " , mode, "to ", newMode);
         }
     }
 
