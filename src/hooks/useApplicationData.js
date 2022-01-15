@@ -29,11 +29,14 @@ export function useApplicationData() {
           interviewers: action.value.interviewers
         };
       case SET_INTERVIEW: 
+        //console.log ("logging what's in action.value.interview: ", action.value.interview);
         return { 
           ...state,
           appointments: action.value.appointments,
           interview: action.value.interview,
-          // spots: action.value.spots,
+
+          //error occurs below with websocket as expecting to receive 5 appts but receiving one only.
+          //as observe from console log in line 32.
           days: getDaysWithRemainingSpots(state.days, action.value.appointments)
         };
       default:
@@ -44,27 +47,12 @@ export function useApplicationData() {
   }
   const setDay = day => dispatch({ type: SET_DAY, value: day });
   
-  // function updateSpots(days, id, increment = true) {
-  //   const updatedDay = days.map((day) => {
-  //     if (increment === false) {
-  //       if (day.appointments.includes(id)) {
-  //         day.spots = day.spots - 1;
-  //       }
-  //       return day;
-  //     } else {
-  //       if (day.appointments.includes(id)) {
-  //         day.spots = day.spots + 1;
-  //       }
-  //       return day;
-  //     }
-  //   });
-  //   return updatedDay;
-  // }  
-  
   function getDaysWithRemainingSpots(days, appointments) {
     const daysWithSpots = days.map((item) => {
+      //console.log("Console log of what's in item appointments: ", item.appointments);
       let spotsAvailable = 0;
       for (const appt of item.appointments) {
+        //console.log("console log of appointments :", appointments);
         if (appointments[appt].interview === null) {
           spotsAvailable++;
         }
@@ -95,8 +83,7 @@ export function useApplicationData() {
         type: SET_INTERVIEW,
         value: {
           appointments: appointments,
-          interview: interview,
-          //spots: updatedDays
+          interview: interview
         }
       });
     })
@@ -120,7 +107,6 @@ export function useApplicationData() {
           value: {
             appointments: appointments,
             interview: null,
-            //spots: updatedDays
           }
         });
       });
@@ -158,37 +144,49 @@ export function useApplicationData() {
             interviewers: all[2].data
           }
         });
-        // const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-        // socket.onopen = () => {
-        //   console.log("Web socket opened");
-        //   socket.send("Ping...");
-        // };
-        // socket.onmessage = appointmentData => {
-        //   const appointment = JSON.parse(appointmentData.data);
-        //   console.log("message to Websocket server: ", appointment);
- 
-        //   debugger;
- 
-        //   const appointments = {
-        //     ...state.appointments,
-        //     [appointment.id]: appointment
-        //   };
- 
-        //    if (appointment.type === "SET_INTERVIEW") {
-        //      console.log("I've reached the step to check for appointment.type response from WebSocket to SET_INTERVIEW")
-        //      dispatch(
-        //       { 
-        //         type: SET_INTERVIEW, 
-        //         value: {
-        //           appointments: appointments
-        //         }
-        //       });
-        //   }
-        // };
-
-
       });
-  }, [])
+  }, []);
+
+  useEffect(()=> {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.onopen = () => {
+      console.log("Web socket opened");
+      socket.send("Ping...");
+    };
+    socket.onmessage = event => {
+      const message = JSON.parse(event.data);
+      console.log("message from Websocket server: ", message);
+      
+      const appointment = {
+        id: message.id,
+        // hardcoded for now 
+        time: "12pm",
+        interview: message.interview !== null? { ...message.interview} : null
+      }
+      console.log("Appointment in the useEffect for WebSocket after creating appointment const", appointment);
+      console.log("Appointments in useEffect in WebSocket: ", state.appointments);
+      const appointments = {
+        ...state.appointments,
+        [message.id]: appointment
+      };
+      
+
+      //  if (message.type === "SET_INTERVIEW") {
+      //    console.log("I've reached the step to check for message.type response from WebSocket to SET_INTERVIEW")
+         dispatch(
+          { 
+            type: message.type, 
+            value: {
+              appointments: appointments,
+              interview: message.interview
+            }
+          });
+      // }
+    };
+    return () => {
+      socket.close()
+    };
+  }, [state.appointments]);
 
   return {
       state,
