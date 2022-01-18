@@ -14,11 +14,11 @@ describe("Form", () => {
       }
     ];
     
-    it("renders without crashing", () => {
-        const { getByPlaceholderText } = render(
-            <Form interviewers={interviewers} />
-        );
-    });
+    // it("renders without crashing", () => {
+    //     const { getByPlaceholderText } = render(
+    //         <Form interviewers={interviewers} />
+    //     );
+    // });
 
     it("renders without student name if not provided", () => {
         const { getByPlaceholderText } = render(
@@ -96,4 +96,4 @@ describe("Form", () => {
       
         expect(onCancel).toHaveBeenCalledTimes(1);
     });
-  });
+});
