@@ -152,46 +152,46 @@ export function useApplicationData() {
       });
   }, []);
 
-  // useEffect(()=> {
-  //   const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-  //   socket.onopen = () => {
-  //     console.log("Web socket opened");
-  //     socket.send("Ping...");
-  //   };
-  //   socket.onmessage = event => {
-  //     const message = JSON.parse(event.data);
-  //     console.log("message from Websocket server: ", message);
+  useEffect(()=> {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.onopen = () => {
+      console.log("Web socket opened");
+      socket.send("Ping...");
+    };
+    socket.onmessage = event => {
+      const message = JSON.parse(event.data);
+      console.log("message from Websocket server: ", message);
       
-  //     const appointment = {
-  //       id: message.id,
-  //       // hardcoded for now 
-  //       time: "12pm",
-  //       interview: message.interview !== null? { ...message.interview} : null
-  //     }
-  //     console.log("Appointment in the useEffect for WebSocket after creating appointment const", appointment);
-  //     console.log("Appointments in useEffect in WebSocket: ", state.appointments);
-  //     const appointments = {
-  //       ...state.appointments,
-  //       [message.id]: appointment
-  //     };
+      const appointment = {
+        id: message.id,
+        // hardcoded for now 
+        time: "12pm",
+        interview: message.interview !== null? { ...message.interview} : null
+      }
+      console.log("Appointment in the useEffect for WebSocket after creating appointment const", appointment);
+      console.log("Appointments in useEffect in WebSocket: ", state.appointments);
+      const appointments = {
+        ...state.appointments,
+        [message.id]: appointment
+      };
       
 
-  //     //  if (message.type === "SET_INTERVIEW") {
-  //     //    console.log("I've reached the step to check for message.type response from WebSocket to SET_INTERVIEW")
-  //        dispatch(
-  //         { 
-  //           type: message.type, 
-  //           value: {
-  //             appointments: appointments,
-  //             interview: message.interview
-  //           }
-  //         });
-  //     // }
-  //   };
-  //   return () => {
-  //     socket.close()
-  //   };
-  // }, [state.appointments]);
+      //  if (message.type === "SET_INTERVIEW") {
+      //    console.log("I've reached the step to check for message.type response from WebSocket to SET_INTERVIEW")
+         dispatch(
+          { 
+            type: message.type, 
+            value: {
+              appointments: appointments,
+              interview: message.interview
+            }
+          });
+      // }
+    };
+    return () => {
+      socket.close()
+    };
+  }, [state.appointments]);
 
   return {
       state,
