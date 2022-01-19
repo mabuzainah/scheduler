@@ -1,5 +1,5 @@
 import React from "react";
-import { render, cleanup, waitForElement, fireEvent, getByText, prettyDOM, getAllByTestId, getByAltText, getByPlaceholderText, queryByText, queryByAltText} from "@testing-library/react";
+import { render, cleanup, waitForElement, fireEvent, getByText, prettyDOM, getAllByTestId, getByAltText, getByPlaceholderText, queryByText, queryByAltText, getByDisplayValue} from "@testing-library/react";
 import Application from "components/Application";
 
 
@@ -91,6 +91,44 @@ describe("Application", () => {
     expect(getByText(day, '2 spots remaining')).toBeInTheDocument();
     //console.log(prettyDOM(appointment));
   
+  });
+
+  /*
+    We use a combination of the two previous tests to build the next one.
+    We want to start by finding an existing interview.
+    With the existing interview we want to find the edit button.
+    We change the name and save the interview.
+    We don't want the spots to change for "Monday", since this is an edit.
+    Read the errors because sometimes they say that await cannot be outside of an async function.
+  */
+
+  it("loads data, edits an interview and keeps the spots remaining for Monday the same", async () => {
+    // 1. Render the Application.
+    const { container } = render(<Application />);
+    // 2. Wait until the text "Archie Cohen" is displayed.
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    // 3. Click the "Edit" button on the booked appointment.
+    const appointment = getAllByTestId(container, "appointment").find(
+      appointment => queryByText(appointment, "Archie Cohen")
+    );
+    fireEvent.click(queryByAltText(appointment, "Edit"));
+    // 4. Change the name of the student from the interview being edited
+    expect(getByDisplayValue(appointment, 'Archie Cohen'));
+    fireEvent.change(getByPlaceholderText(appointment,"Enter Student Name"), {
+      target: { value: "Lydia Miller-Jones" }
+    });
+    // 5. clicking on the "Save" button on the form being edited.
+    fireEvent.click(getByText(appointment, "Save"));
+    // 6. Expect to see "Saving" message is being displayed
+    expect(getByText(appointment, "Saving")).toBeInTheDocument();
+    // 7. Expect to have Lydia Miller-Jones present in the document
+    await waitForElement(() => queryByText(container, "Lydia Miller-Jones"));
+    // 8. Check that the DayListItem with the text "Monday" also has the text "1 spot remaining".
+    const day = getAllByTestId(container, 'day').find(day =>
+      queryByText(day, 'Monday')
+    );
+    expect(getByText(day, '1 spot remaining')).toBeInTheDocument();
+    //console.log(prettyDOM(appointment));
   });
 
 });
