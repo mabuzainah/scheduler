@@ -131,4 +131,12 @@ describe("Application", () => {
     //console.log(prettyDOM(appointment));
   });
 
+  it("shows the save error when failing to save an appointment", async () => {
+
+  });
+  
+  it("shows the delete error when failing to delete an existing appointment", async () => {
+  
+  });
+
 });
