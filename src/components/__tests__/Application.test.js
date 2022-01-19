@@ -181,7 +181,7 @@ describe("Application", () => {
     getByText(appointment, "Could not delete appointment")
     );
     expect(getByText(appointment, "Could not delete appointment")).toBeInTheDocument();
-    console.log(prettyDOM(appointment));
+    //console.log(prettyDOM(appointment));
   });
 
 });
