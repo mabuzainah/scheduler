@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import axios  from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import reducer, {
   SET_DAY,
   SET_APPLICATION_DATA,
@@ -12,7 +12,7 @@ export function useApplicationData() {
   // const SET_DAY = "SET_DAY";
   // const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   // const SET_INTERVIEW = "SET_INTERVIEW";
-
+  
   const [state, dispatch] = useReducer( reducer, {
       day: "Monday",
       days: [],
@@ -134,34 +134,47 @@ export function useApplicationData() {
       //return axios.get('http://localhost:8001/api/interviewers');
       return axios.get('/api/interviewers');
   }
-
   useEffect(() => {
-      Promise.all([
+    Promise.all([
       getDaysAxios(),
       getAppointmentsAxios(),
       getInterviewersAxios(),
-      ]).then((all) => {
-        dispatch({
-          type: SET_APPLICATION_DATA,
-          value: {
-            days: all[0].data,
-            appointments: all[1].data,
-            interviewers: all[2].data
-          }
-        });
+    ]).then((all) => {
+      dispatch({
+        type: SET_APPLICATION_DATA,
+        value: {
+          days: all[0].data,
+          appointments: all[1].data,
+          interviewers: all[2].data
+        }
       });
+    });
   }, []);
-
+  
+  const socket = useRef(null)
   useEffect(()=> {
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    socket.onopen = () => {
+    socket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.current.onopen = () => {
       console.log("Web socket opened");
-      socket.send("Ping...");
+      socket.current.send("Ping...");
     };
-    socket.onmessage = event => {
+    socket.current.onclose = e => console.log("CLOSED!!!!!!")
+    
+    const wsCurrent = socket.current;
+      console.log(wsCurrent)
+    return () => {
+      wsCurrent.close()
+    };
+  },[]);
+
+  useEffect (() => {
+    if(!socket.current) return;
+    socket.current.onmessage = event => {
       const message = JSON.parse(event.data);
       console.log("message from Websocket server: ", message);
       
+      
+
       const appointment = {
         id: message.id,
         // hardcoded for now 
@@ -188,10 +201,7 @@ export function useApplicationData() {
           });
       // }
     };
-    return () => {
-      socket.close()
-    };
-  }, [state.appointments]);
+  },[state.appointments])
 
   return {
       state,
