@@ -9,6 +9,7 @@ import { useVisualMode } from "hooks/useVisualMode";
 import Form from "./Form";
 import Confirm from "./Confirm";
 import Error from "./Error";
+import { useEffect } from "react";
 
 export default function Appointment(props) {
     const EMPTY = "EMPTY";
@@ -61,6 +62,15 @@ export default function Appointment(props) {
     function edit () {
         transition(EDIT);
     }
+
+    useEffect(() => {
+        if (props.interview && mode === EMPTY) {
+            transition(SHOW);
+        }
+        if (props.interview === null && mode === SHOW) {
+            transition(EMPTY);
+        }
+    }, [props.interview, transition, mode]);
 
     return (
         <article className = "appointment" data-testid="appointment">

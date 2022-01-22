@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import axios  from "axios";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import reducer, {
   SET_DAY,
   SET_APPLICATION_DATA,
@@ -12,7 +12,7 @@ export function useApplicationData() {
   // const SET_DAY = "SET_DAY";
   // const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   // const SET_INTERVIEW = "SET_INTERVIEW";
-
+  
   const [state, dispatch] = useReducer( reducer, {
       day: "Monday",
       days: [],
@@ -134,64 +134,74 @@ export function useApplicationData() {
       //return axios.get('http://localhost:8001/api/interviewers');
       return axios.get('/api/interviewers');
   }
-
   useEffect(() => {
-      Promise.all([
+    Promise.all([
       getDaysAxios(),
       getAppointmentsAxios(),
       getInterviewersAxios(),
-      ]).then((all) => {
-        dispatch({
-          type: SET_APPLICATION_DATA,
-          value: {
-            days: all[0].data,
-            appointments: all[1].data,
-            interviewers: all[2].data
-          }
-        });
+    ]).then((all) => {
+      dispatch({
+        type: SET_APPLICATION_DATA,
+        value: {
+          days: all[0].data,
+          appointments: all[1].data,
+          interviewers: all[2].data
+        }
       });
+    });
   }, []);
+  
+  const socket = useRef(null)
+  useEffect(()=> {
+    socket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.current.onopen = () => {
+      console.log("Web socket opened");
+      socket.current.send("Ping...");
+    };
+    socket.current.onclose = e => console.log("CLOSED!!!!!!")
+    
+    const wsCurrent = socket.current;
+      console.log(wsCurrent)
+    return () => {
+      wsCurrent.close()
+    };
+  },[]);
 
-  // useEffect(()=> {
-  //   const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-  //   socket.onopen = () => {
-  //     console.log("Web socket opened");
-  //     socket.send("Ping...");
-  //   };
-  //   socket.onmessage = event => {
-  //     const message = JSON.parse(event.data);
-  //     console.log("message from Websocket server: ", message);
+  useEffect (() => {
+    if(!socket.current) return;
+    socket.current.onmessage = event => {
+      const message = JSON.parse(event.data);
+      console.log("message from Websocket server: ", message);
       
-  //     const appointment = {
-  //       id: message.id,
-  //       // hardcoded for now 
-  //       time: "12pm",
-  //       interview: message.interview !== null? { ...message.interview} : null
-  //     }
-  //     console.log("Appointment in the useEffect for WebSocket after creating appointment const", appointment);
-  //     console.log("Appointments in useEffect in WebSocket: ", state.appointments);
-  //     const appointments = {
-  //       ...state.appointments,
-  //       [message.id]: appointment
-  //     };
       
 
-  //     //  if (message.type === "SET_INTERVIEW") {
-  //     //    console.log("I've reached the step to check for message.type response from WebSocket to SET_INTERVIEW")
-  //        dispatch(
-  //         { 
-  //           type: message.type, 
-  //           value: {
-  //             appointments: appointments,
-  //             interview: message.interview
-  //           }
-  //         });
-  //     // }
-  //   };
-  //   return () => {
-  //     socket.close()
-  //   };
-  // }, [state.appointments]);
+      const appointment = {
+        id: message.id,
+        // hardcoded for now 
+        time: "12pm",
+        interview: message.interview !== null? { ...message.interview} : null
+      }
+      console.log("Appointment in the useEffect for WebSocket after creating appointment const", appointment);
+      console.log("Appointments in useEffect in WebSocket: ", state.appointments);
+      const appointments = {
+        ...state.appointments,
+        [message.id]: appointment
+      };
+      
+
+      //  if (message.type === "SET_INTERVIEW") {
+      //    console.log("I've reached the step to check for message.type response from WebSocket to SET_INTERVIEW")
+         dispatch(
+          { 
+            type: message.type, 
+            value: {
+              appointments: appointments,
+              interview: message.interview
+            }
+          });
+      // }
+    };
+  },[state.appointments])
 
   return {
       state,
