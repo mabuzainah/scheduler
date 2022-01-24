@@ -27,11 +27,6 @@ export default function Form(props) {
             setError("Student name cannot be blank");
             return
         }
-        // if (!currentInterviewer) {
-        //     setError("Interviewer name cannot be blank");
-        // } else if (currentNameOfStudent !== "" && currentInterviewer){
-        //     props.onSave(currentNameOfStudent,currentInterviewer);
-        // }
         setError("");
         props.onSave(currentNameOfStudent,currentInterviewer);
 
@@ -49,9 +44,6 @@ export default function Form(props) {
                 type="text"
                 placeholder={"Enter Student Name"}
                 data-testid="student-name-input"
-                /*
-                This must be a controlled component
-                */
             />
             </form>
             <section className="appointment__validation">{error}</section>

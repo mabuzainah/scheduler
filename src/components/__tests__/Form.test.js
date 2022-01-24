@@ -13,12 +13,6 @@ describe("Form", () => {
         avatar: "https://i.imgur.com/LpaY82x.png"
       }
     ];
-    
-    // it("renders without crashing", () => {
-    //     const { getByPlaceholderText } = render(
-    //         <Form interviewers={interviewers} />
-    //     );
-    // });
 
     it("renders without student name if not provided", () => {
         const { getByPlaceholderText } = render(
@@ -40,11 +34,7 @@ describe("Form", () => {
             <Form interviewers={interviewers} onSave={onSave} />
             );
         fireEvent.click(getByText("Save"));
-        
-        /* 1. validation is shown */
         expect(getByText(/student name cannot be blank/i)).toBeInTheDocument();
-      
-        /* 2. onSave is not called */
         expect(onSave).not.toHaveBeenCalled();
     });
       

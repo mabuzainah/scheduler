@@ -3,7 +3,6 @@ import DayListItem from "./DayListItem";
 
 
 export default function DayList(props) {
-    //removed line 15 that had {dayz} in there, as really makes no difference.
     const dayList = props.days.map(dayz => {
         return (<DayListItem 
                 key= {dayz.id}
