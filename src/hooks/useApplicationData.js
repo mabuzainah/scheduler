@@ -47,8 +47,6 @@ export function useApplicationData() {
         ...state.appointments,
         [id] : appointment
       }
-      //const updatedDays = updateSpots(state.days, id, true);
-      //Make put request to update state locally and on server
       return axios.delete(`/api/appointments/${id}`)
       .then(result =>{
         dispatch({
