@@ -30,7 +30,7 @@ Considerations:
 
 ## DEMO of running Project with WebSocket
 
-![WebSocket Demo](https://github.com/mabuzainah/scheduler/blob/master/docs/Deleting%20an%20Appointment.mov)
+![WebSocket Demo](https://github.com/mabuzainah/scheduler/blob/master/docs/WebSocket%20Demo.mov)
 
 ## Screenshots of the Project
 
