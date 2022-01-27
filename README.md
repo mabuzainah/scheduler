@@ -28,7 +28,7 @@ Considerations:
 - If running the react project, please ensure that you're running both the Webpack Development Server and also running the Scheduler-Api from following GitHub URL (https://github.com/lighthouse-labs/scheduler-api). Be sure to follow the steps on the scheduler-api page for setting up the server.
 
 
-## DEMO of running Project with WebSocket
+## DEMO of running Project with WebSocket - if issues viewing please access through docs folder in Repository
 
 ![WebSocket Demo](https://github.com/mabuzainah/scheduler/blob/master/docs/WebSocket%20Demo.mov)
 
