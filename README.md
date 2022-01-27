@@ -28,6 +28,24 @@ Considerations:
 - If running the react project, please ensure that you're running both the Webpack Development Server and also running the Scheduler-Api from following GitHub URL (https://github.com/lighthouse-labs/scheduler-api). Be sure to follow the steps on the scheduler-api page for setting up the server.
 
 
+## DEMO of running Project with WebSocket - if issues viewing please access through docs folder in Repository
+
+![WebSocket Demo](https://github.com/mabuzainah/scheduler/blob/master/docs/WebSocket%20Demo.mov)
+
+## Screenshots of the Project
+
+Demo'ing deletion of a booked appointment:
+![Deleting An Appointment](https://github.com/mabuzainah/scheduler/blob/master/docs/Deleting%20an%20Appointment.mov)
+
+Error handling when student name is blank:
+![Verifying Student Name](https://github.com/mabuzainah/scheduler/blob/master/docs/Verifying%20Student%20Name.png)
+
+Error thrown when attempting to Save when running scheduler-api in error mode:
+![Error Saving](https://github.com/mabuzainah/scheduler/blob/master/docs/Error%20Saving.png)
+
+Error thrown when attempting to Delete when running scheduler-api in error mode:
+![Error Deleting](https://github.com/mabuzainah/scheduler/blob/master/docs/Error%20Deleting.png)
+
 ## Running Webpack Development Server
 
 ```sh
